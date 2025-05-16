@@ -75,7 +75,8 @@ const getBet = (balance, lines) => {
     }
 }
 
-const spin = () => {
+const spin = (lines) => {
+    console.log("Spinning...")
     const symbols = [];
 
     for (const [symbol, count] of Object.entries(SYMBOLS_COUNT)){
@@ -97,18 +98,97 @@ const spin = () => {
         }
         reels.push(temp);
     }
+    // print the spin result
+
+    for (let i = 0; i < lines; i++){
+        let st = ""
+        for (let j = 0; j < COLS; j++){
+            st += reels[j][i]
+            st += " | "
+        }
+        console.log(st)
+    }
     return reels;
+    
+}
+
+const checkWin = (reels) => {
+    // default is lose
+    const wins = {
+        1: false,
+        2: false,
+        3: false,
+    }
+
+    for (let i =0; i < ROWS; i++){
+        let win = true;
+        for (let j = 1; j < COLS; j++){
+            win = win && (reels[j-1][i] === reels[j][i]);
+        }
+        if (win === true){
+            wins[i+1] = reels[0][i];
+        }
+        
+    }
+
+    return wins
+}
+
+const getWinnings = (wins, bet, lines) =>{
+    let winnings = 0;
+    for (let row = 0; row < lines; row++){
+        const multiplier = row+1;
+        if (wins[multiplier] != false){
+            winnings += multiplier*bet*SYMBOL_VALUES[wins[multiplier]];
+        }
+    }
+    return winnings;
     
 }
 
 // Main
 let balance = deposit();
-const lines = getLines()
-const bet = getBet(balance, lines);
+console.log("Deposit amount: $" + balance)
+while (true){
+    const lines = getLines()
+    const bet = getBet(balance, lines);
+    balance -= (bet*lines)
+    console.log("==========")
+    console.log("Placed bet on " + lines + " line(s)")
+    console.log("Bet Amount per line: $" + bet + "\n----------\nTotal Bet: $" + bet*lines + "\nRemaining Balace: $" + balance);
+    console.log("----------")
+    const reels = spin(lines);
+    const wins = checkWin(reels)
+    const winnings = getWinnings(wins, bet, lines);
+    console.log("Winnings: $" + winnings);
+    balance += winnings;
+    console.log("Remaining Balance: $" + balance);
+    let play_again = ""
+    console.log("==========")
+    if (balance === 0){
+        console.log("Your balance is now $0. You can't play anymore");
+        break;
+    }
+    while (play_again != "n" || play_again != "N" || play_again != "y" || play_again != "Y"){
+        console.log("----------")
+        play_again = prompt("Do you wish to play again? (y/n): ")
+        if (play_again == "n" || play_again == "N"){
+            break;
+        }
+        else if(play_again == "y" || play_again == "Y"){
+            break;
+        }
+        else{
+            console.log("Invalid Command!")
+            continue;
+        }
+    }
+    if (play_again == "n" || play_again == "N"){
+        console.log("Cashed Out: $" + balance);
+        break;
+    }
+    else{
+        continue;
+    }
+}
 
-console.log("Deposit amount is $" + balance)
-console.log("Placed bet on " + lines + " line(s)")
-console.log("Bet Amount per line is $" + bet + ". Total = " + bet*lines);
-
-const reels = spin();
-console.log(reels)
