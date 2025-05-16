@@ -29,7 +29,7 @@ A simple command-line Slot Machine game built with Node.js. Users can deposit mo
 ### Option 1: Clone from GitHub
 
 ```bash
-git clone https://github.com/DarshanBothra/JavaScript-Tutorial.git
+git clone https://github.com/DarshanBothra/Slot-Machine-JS-Tutorial-Project.git
 cd JavaScript-Tutorial/slot-machine-game
 npm install
 node script.js
