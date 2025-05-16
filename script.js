@@ -10,6 +10,23 @@
 
 const prompt = require("prompt-sync")();
 
+// Global Vars
+
+const ROWS = 3;
+const COLS = 3;
+const SYMBOLS_COUNT = {
+    A: 2,
+    B: 4,
+    C: 6,
+    D: 8
+}
+const SYMBOL_VALUES ={
+    A: 5,
+    B: 4,
+    C: 3,
+    D: 2
+}
+
 // Functions
 
 const deposit = () => {
@@ -58,7 +75,31 @@ const getBet = (balance, lines) => {
     }
 }
 
+const spin = () => {
+    const symbols = [];
 
+    for (const [symbol, count] of Object.entries(SYMBOLS_COUNT)){
+        for (let i = 0; i < count; i++){
+            symbols.push(symbol)
+        }
+    }
+
+    const reels = []; // each array represents a column of the slot machine
+
+    for (let i = 0; i < COLS; i++){
+        const temp = [];
+        const reel_symbols = [...symbols]
+        for (let j = 0; j < ROWS; j++){
+            const random_index = Math.floor(Math.random() *reel_symbols.length);
+            const selected_symbol = reel_symbols[random_index];
+            temp.push(selected_symbol);
+            reel_symbols.splice(random_index, 1);
+        }
+        reels.push(temp);
+    }
+    return reels;
+    
+}
 
 // Main
 let balance = deposit();
@@ -68,3 +109,6 @@ const bet = getBet(balance, lines);
 console.log("Deposit amount is $" + balance)
 console.log("Placed bet on " + lines + " line(s)")
 console.log("Bet Amount per line is $" + bet + ". Total = " + bet*lines);
+
+const reels = spin();
+console.log(reels)
